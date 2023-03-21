@@ -1,0 +1,21 @@
+{
+  "editor.fontFamily": "JetBrains Mono SemiBold",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 12,
+  "[javascript]": {
+    "editor.maxTokenizationLineLength": 2500,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.formatOnType": false,
+    "editor.tabSize": 2
+  },
+  "[typescript]": {
+    "editor.maxTokenizationLineLength": 2500,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.formatOnType": false,
+    "editor.tabSize": 2
+  },
+}

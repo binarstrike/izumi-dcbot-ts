@@ -1,0 +1,23 @@
+{
+  "name": "izumi-dcbot-ts",
+  "version": "1.0.0",
+  "description": "Sebuah Bot Discord dengan fungsi seperti Chat GPT dari OpenAI",
+  "main": "index.js",
+  "repository": "https://github.com/binarstrike/izumi-dcbot-ts.git",
+  "author": "Binar Nugroho <92077948+binarstrike@users.noreply.github.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start":"node dist/index.js"
+  },
+
+  "devDependencies": {
+    "prisma": "^4.11.0",
+    "typescript": "^5.0.2"
+  },
+  "dependencies": {
+    "discord.js": "^14.8.0",
+    "dotenv": "^16.0.3",
+    "glob": "7.2.0"
+  }
+}
