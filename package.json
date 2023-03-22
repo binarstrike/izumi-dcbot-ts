@@ -8,14 +8,22 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start":"node dist/index.js"
+    "start": "node dist/index.js",
+    "start:dev": "ts-node-dev src/index.ts",
+    "start:mon": "ts-node-dev src/index.ts --watch",
+    "start:prod": "pm2-docker dist/index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:deploy": "prisma migrate deploy --preview-feature",
+    "build:ts": "tsc --build --verbose"
   },
-
   "devDependencies": {
+    "@types/node": "^18.15.5",
     "prisma": "^4.11.0",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.0.2"
   },
   "dependencies": {
+    "@prisma/client": "^4.11.0",
     "discord.js": "^14.8.0",
     "dotenv": "^16.0.3",
     "glob": "7.2.0"

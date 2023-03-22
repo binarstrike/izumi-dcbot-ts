@@ -1,0 +1,12 @@
+node_modules
+.git
+.gitignore
+.gitattributes
+README.md
+dist
+.vscode
+.prettierrc
+yarn.lock
+.env
+Dockerfile
+docker-compose.yml

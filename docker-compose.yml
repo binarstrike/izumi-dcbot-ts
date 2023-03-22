@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  dcbot:
+    build: .
+    container_name: dcbot_chatgpt
+    environment:
+      - MEMCACHED_HOST=memcached
+      - OPENAI_KEY=${OPENAI_KEY}
+      - BOT_TOKEN=${BOT_TOKEN}
+      - DATABASE_URL=mysql://${DB_USER}:${DB_PASS}@db_mysql:3306/${DB_NAME}
+    depends_on:
+      db_mysql:
+        condition: service_healthy
+      memcached:
+        condition: service_started
+  db_mysql:
+    image: mysql:8-debian
+    container_name: dcbot_db
+    volumes:
+      - db_dcbot:/var/lib/mysql
+    environment:
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASS}
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: "mysql -u${DB_USER} -p${DB_PASS} -e \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    
+  memcached:
+    image: memcached:latest
+    container_name: dcbot_memcached
+
+volumes:
+  db_dcbot:
+    driver: local
