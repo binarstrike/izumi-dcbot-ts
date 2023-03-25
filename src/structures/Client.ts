@@ -1,3 +1,7 @@
+import { CommandBuilderType } from "../typings/Command"
+import glob from "glob"
+import { promisify } from "util"
+import { Event } from "./Event"
 import {
   ApplicationCommandDataResolvable,
   Client,
@@ -5,13 +9,13 @@ import {
   Collection,
   GatewayIntentBits,
 } from "discord.js"
-import { CommandBuilderType } from "../typings/Command"
-import glob from "glob"
-import { promisify } from "util"
-import { Event } from "./Event"
+import { resolve } from "path"
 import dotenv from "dotenv"
 
-dotenv.config()
+if (process.env?.NODE_ENV !== "production")
+  dotenv.config({ path: resolve(process.cwd(), ".env.development.local") })
+else dotenv.config()
+
 const globPromise = promisify(glob)
 
 export class ExtendedClient extends Client {
