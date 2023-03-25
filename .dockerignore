@@ -6,7 +6,10 @@ README.md
 dist
 .vscode
 .prettierrc
-yarn.lock
 .env
+.env.development.local
+.env.production.local
 Dockerfile
+Dockerfile.dev
 docker-compose.yml
+docker-compose.dev.yml

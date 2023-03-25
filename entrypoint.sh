@@ -7,10 +7,14 @@ else
     WORKDIR=/bot
     MAIN_SCRIPT=$WORKDIR/dist/index.js
     cd $WORKDIR
-    echo "Starting Discord Bot Chat GPT..."
+    printf "Starting Discord Bot Chat GPT...\n"
     sleep 2
     # apply migration to database
     yarn prisma:deploy
-    
-    pm2-docker $MAIN_SCRIPT
+    if test "$NODE_ENV" == "development"; then
+        MAIN_SCRIPT=$WORKDIR/src/index.ts
+        yarn start:dev
+    else
+        pm2-docker $MAIN_SCRIPT
+    fi
 fi

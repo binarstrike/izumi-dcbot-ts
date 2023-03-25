@@ -4,23 +4,22 @@ WORKDIR /build
 
 COPY . /build
 
-RUN yarn --no-lockfile && yarn build:ts
+RUN yarn && yarn build:ts
 
-FROM build AS final
+FROM node:18-slim
 
 WORKDIR /bot
 
 COPY --from=build /build/dist /bot/dist
 
-RUN rm -rvf /build
-
-COPY ./prisma ./package.json ./
+COPY ./prisma ./yarn.lock ./package.json ./
 
 COPY ./entrypoint.sh /entrypoint.sh
 
-RUN yarn --no-lockfile --prod && \
+RUN yarn --prod && \
 yarn prisma:generate && \
-yarn global add pm2 && \
-yarn cache clean
+yarn global add pm2
+
+RUN yarn cache clean
 
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]

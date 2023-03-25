@@ -1,0 +1,12 @@
+FROM node:18-slim
+
+WORKDIR /bot
+
+COPY . .
+
+RUN mv ./entrypoint.sh /entrypoint.sh
+
+RUN yarn && \
+yarn prisma:generate
+
+ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]

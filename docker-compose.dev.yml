@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   dcbot:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     container_name: dcbot_chatgpt
     environment:
       - MEMCACHED_HOST=memcached
@@ -15,6 +17,9 @@ services:
         condition: service_healthy
       memcached:
         condition: service_started
+    volumes:
+      - ./src:/bot/src
+      - yarn_cache:/usr/local/share/.cache/yarn/v6
   db_mysql:
     image: mysql:8-debian
     container_name: dcbot_db
@@ -38,3 +43,4 @@ services:
 
 volumes:
   db_dcbot:
+  yarn_cache:
