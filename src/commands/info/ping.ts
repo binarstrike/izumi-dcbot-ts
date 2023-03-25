@@ -3,9 +3,11 @@ import { Command } from "../../structures/Command"
 
 export default new Command({
   builder: new SlashCommandBuilder()
-    .setName("help")
-    .setDescription("Show help for other commnad"),
+    .setName("ping")
+    .setDescription("Check bot latency"),
   async run({ interaction }) {
-    interaction.followUp("Hi")
+    interaction.followUp(
+      `🏓 | Latency is: **${Date.now() - interaction.createdTimestamp}ms.**`
+    )
   },
 })
