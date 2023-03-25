@@ -3,7 +3,7 @@ import { client } from ".."
 import { Event } from "../structures/Event"
 import { ExtendedInteraction } from "../typings/Command"
 
-export default new Event("interactionCreate", async (interaction) => {
+export default new Event("interactionCreate", async function (interaction) {
   // Chat Input Commands
   if (interaction.isCommand()) {
     await interaction.deferReply()

@@ -1,7 +1,33 @@
 import { Event } from "../structures/Event"
 import { client } from ".."
+import prisma from "../configs/prisma"
 
-export default new Event("guildCreate", async (guild) => {
-  await guild.commands.set(client.slashCommands)
-  console.log(`Registering commands to ${guild.id}`)
+export default new Event("guildCreate", async function (guild) {
+  try {
+    const findServer = await prisma.serverData.findUnique({
+      where: { serverId: guild.id },
+    })
+    if (!findServer) {
+      await prisma.serverData.create({
+        data: {
+          serverId: guild.id,
+          serverName: guild.name,
+          channelConfiguration: {
+            create: { channelName: "general" },
+          },
+        },
+      })
+      await guild.commands.set(client.slashCommands)
+      console.log(
+        `Server baru telah ditambahkan.\nid: ${guild.id}\nname: ${guild.name}`
+      )
+    } else {
+      await guild.commands.set(client.slashCommands)
+      console.log(
+        `Server baru telah ditambahkan.\nid: ${guild.id}\nname:${guild.name}`
+      )
+    }
+  } catch (error) {
+    console.log(error.message)
+  }
 })
