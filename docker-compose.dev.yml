@@ -11,6 +11,7 @@ services:
       - OPENAI_KEY=${OPENAI_KEY}
       - BOT_TOKEN=${BOT_TOKEN}
       - NODE_ENV=${NODE_ENV}
+      - CLIENT_ID=${CLIENT_ID}
       - DATABASE_URL=mysql://${DB_USER}:${DB_PASS}@db_mysql:3306/${DB_NAME}
     depends_on:
       db_mysql:
