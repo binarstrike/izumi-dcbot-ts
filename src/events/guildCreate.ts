@@ -1,5 +1,4 @@
 import { Event } from "../structures/Event"
-import { client } from ".."
 import prisma from "../configs/prisma"
 
 export default new Event("guildCreate", async function (guild) {
@@ -17,17 +16,15 @@ export default new Event("guildCreate", async function (guild) {
           },
         },
       })
-      await guild.commands.set(client.slashCommands)
       console.log(
         `Server baru telah ditambahkan.\nid: ${guild.id}\nname: ${guild.name}`
       )
-    } else {
-      await guild.commands.set(client.slashCommands)
-      console.log(
-        `Server baru telah ditambahkan.\nid: ${guild.id}\nname:${guild.name}`
-      )
+      return
     }
+    console.log(
+      `Server baru telah ditambahkan.\nid: ${guild.id}\nname: ${guild.name}`
+    )
   } catch (error) {
-    console.log(error.message)
+    console.log(error)
   }
 })
