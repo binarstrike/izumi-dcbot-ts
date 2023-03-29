@@ -5,8 +5,12 @@ import memcacheClient from "../configs/memcached"
 import { client } from ".."
 import { Message } from "discord.js"
 
+const PAST_MESSAGES: number = 6
+const regexMention: RegExp = /<(?:[^\d>]+|:[A-Za-z0-9]+:)[0-9]+>/g
+
 export default new Event("messageCreate", async function (message) {
   if (message.author.bot) return
+  else if (regexMention.test(message.content) || message?.interaction) return
 
   const cacheChannelId = await memcacheClient.get(message.guild.id)
   if (!cacheChannelId) {
@@ -19,9 +23,6 @@ export default new Event("messageCreate", async function (message) {
     if (message.channel.id !== channel?.channelId) return
   } else if (message.channel.id !== cacheChannelId.value) return
 
-  const PAST_MESSAGES: number = 6
-  const regexMention: RegExp = /<(?:[^\d>]+|:[A-Za-z0-9]+:)[0-9]+>/g
-
   const fetchChannelMessages = await message.channel.messages.fetch({
     limit: PAST_MESSAGES,
     before: message.id,
@@ -31,12 +32,12 @@ export default new Event("messageCreate", async function (message) {
     fetchChannelMessages.keys()
   ).map((key: string) => fetchChannelMessages.get(key))
 
+  messages.unshift(message)
+
   //* filter pesan yang terdapat properti interaction seperti slash command dan pesan yang terdapat mention
   messages = messages.filter(
     (message) => !message?.interaction || !regexMention.test(message.content)
   )
-
-  messages.unshift(message)
 
   let users = [
     ...new Set([
