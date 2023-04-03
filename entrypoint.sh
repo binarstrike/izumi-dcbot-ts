@@ -12,8 +12,7 @@ else
     # apply migration to database
     yarn prisma:deploy
     if test "$NODE_ENV" == "development"; then
-        MAIN_SCRIPT=$WORKDIR/src/index.ts
-        yarn start:dev
+        yarn build:js && yarn start
     else
         pm2-docker $MAIN_SCRIPT
     fi

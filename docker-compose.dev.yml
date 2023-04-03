@@ -20,6 +20,7 @@ services:
         condition: service_started
     volumes:
       - ./src:/bot/src
+      - ./entrypoint.sh:/entrypoint.sh
       - yarn_cache:/usr/local/share/.cache/yarn/v6
   db_mysql:
     image: mysql:8-debian
