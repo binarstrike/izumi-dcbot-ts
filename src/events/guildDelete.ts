@@ -1,6 +1,5 @@
 import { Event } from "../structures/Event"
 import prisma from "../configs/prisma"
-import { clearCommandGuild } from "../utils/clearSlashCommand"
 
 export default new Event("guildDelete", async function (guild) {
   try {
