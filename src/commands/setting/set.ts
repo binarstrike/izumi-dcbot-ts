@@ -12,7 +12,7 @@ export default new Command({
     .addSubcommand((channel) =>
       channel
         .setName("channel")
-        .setDescription("Set default channel untuk bot")
+        .setDescription("Set channel untuk chat dengan bot")
         .addChannelOption((channel_opt) =>
           channel_opt
             .setName("channel")
