@@ -4,7 +4,7 @@ WORKDIR /build
 
 COPY . /build
 
-RUN yarn && yarn build:ts
+RUN yarn && yarn build:js
 
 FROM node:18-slim
 
