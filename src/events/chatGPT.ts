@@ -2,6 +2,7 @@ import { Event } from "../structures/Event"
 import openAI from "../configs/openai"
 import prisma from "../configs/prisma"
 import memcacheClient from "../configs/memcached"
+import ErrorEmbedGenerator from "../utils/ErrorEmbedGenerator"
 import { client } from ".."
 import { Message } from "discord.js"
 
@@ -61,16 +62,38 @@ export default new Event("messageCreate", async function (message) {
   }
   prompt += `${client.user.username}:`
 
-  const response = await openAI.createCompletion({
-    prompt,
-    model: "text-davinci-003",
-    max_tokens: 1000,
-    temperature: 0.9,
-    top_p: 1,
-    presence_penalty: 0.6,
-    frequency_penalty: 0.0,
-    //* stop: ["\n"], //* bot akan berhenti mengirim balasan/response jika terdapat karakter '\n' atau Enter
-  })
+  try {
+    const response = await openAI.createCompletion({
+      prompt,
+      model: "text-davinci-003",
+      max_tokens: 1000,
+      temperature: 0.9,
+      top_p: 1,
+      presence_penalty: 0.6,
+      frequency_penalty: 0.0,
+    })
 
-  await message.channel.send(response.data.choices[0].text)
+    message.channel.send(response.data.choices[0].text)
+  } catch (error) {
+    if (error?.isAxiosError) {
+      const embed = new ErrorEmbedGenerator(
+        "An error occurred",
+        error?.response?.status == 429
+          ? "requests to the API are limited"
+          : error.response.statusText
+      )
+      message.reply({ embeds: [embed], options: { ephemeral: true } })
+    } else
+      message.reply({
+        embeds: [
+          new ErrorEmbedGenerator(
+            "Error when get response from API",
+            error?.response?.statusText
+              ? error.response.statusText
+              : "I don't know"
+          ),
+        ],
+        options: { ephemeral: true },
+      })
+  }
 })
