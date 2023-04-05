@@ -1,6 +1,7 @@
 import { Command } from "../../structures/Command"
 import { fetchGif } from "../../utils/fetchTenorGif"
 import memcacheClient from "../../configs/memcached"
+import ErrorEmbedGenerator from "../../utils/ErrorEmbedGenerator"
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js"
 
 export default new Command({
@@ -64,7 +65,15 @@ export default new Command({
       interaction.followUp({ embeds })
     } catch (error) {
       console.log(error)
-      interaction.followUp({ content: "An error occurred", ephemeral: true })
+      interaction.followUp({
+        embeds: [
+          new ErrorEmbedGenerator(
+            "An error occurred",
+            error?.message ? error.message : "Unknown error"
+          ),
+        ],
+        ephemeral: true,
+      })
     }
   },
 })
