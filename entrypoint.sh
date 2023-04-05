@@ -7,7 +7,7 @@ else
     WORKDIR=/bot
     MAIN_SCRIPT=$WORKDIR/dist/index.js
     cd $WORKDIR
-    printf "Starting Discord Bot Chat GPT...\n"
+    printf "Starting Discord Bot...\n"
     sleep 2
     # apply migration to database
     yarn prisma:deploy

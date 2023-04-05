@@ -10,6 +10,7 @@ services:
       - MEMCACHED_HOST=memcached
       - OPENAI_KEY=${OPENAI_KEY}
       - BOT_TOKEN=${BOT_TOKEN}
+      - TENOR_API_KEY=${TENOR_API_KEY}
       - NODE_ENV=${NODE_ENV}
       - CLIENT_ID=${CLIENT_ID}
       - DATABASE_URL=mysql://${DB_USER}:${DB_PASS}@db_mysql:3306/${DB_NAME}

@@ -18,4 +18,7 @@
     "editor.formatOnType": false,
     "editor.tabSize": 2
   },
+  "[shellscript]": {
+    "files.eol": "\n"
+  }
 }
