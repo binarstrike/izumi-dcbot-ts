@@ -30,6 +30,7 @@
     "dotenv": "^16.0.3",
     "glob": "7.2.0",
     "memcache-client": "^1.0.2",
-    "openai": "^3.2.1"
+    "openai": "^3.2.1",
+    "winston": "^3.8.2"
   }
 }
