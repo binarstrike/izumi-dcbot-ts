@@ -2,7 +2,10 @@ import { Command } from "../../structures/Command"
 import { fetchGif } from "../../utils/fetchTenorGif"
 import memcacheClient from "../../configs/memcached"
 import ErrorEmbedGenerator from "../../utils/ErrorEmbedGenerator"
+import MyLogger from "../../utils/MyLogger"
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js"
+
+const logger = new MyLogger("Command>reaction>blush")
 
 export default new Command({
   builder: new SlashCommandBuilder()
@@ -29,15 +32,17 @@ export default new Command({
       ) as string[]
 
       if (typeof listGifUrl[0] === "string" && listGifUrl.length !== 0) {
+        logger.info("use cache for GIF url")
         gifUrl = listGifUrl[0]
         listGifUrl.shift()
         memcacheClient.set(cackeKey, JSON.stringify(listGifUrl), {
-          lifetime: 120,
+          lifetime: 60 * 30,
         })
       } else {
+        logger.info("fetching Tenor GIF API for GIF url")
         const fetchGifUrl = await fetchGif({
           q: "anime blush shy",
-          limit: 20,
+          limit: 50,
           client_key: process.env.CLIENT_ID,
         })
 
@@ -45,7 +50,7 @@ export default new Command({
         fetchGifUrl.shift()
 
         memcacheClient.set(cackeKey, JSON.stringify(fetchGifUrl), {
-          lifetime: 120,
+          lifetime: 60 * 30,
         })
       }
       const embeds: Array<EmbedBuilder> = [
@@ -64,7 +69,7 @@ export default new Command({
       ]
       interaction.followUp({ embeds })
     } catch (error) {
-      console.log(error)
+      logger.error(error.message)
       interaction.followUp({
         embeds: [
           new ErrorEmbedGenerator(
