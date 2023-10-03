@@ -1,29 +1,27 @@
-import { client } from ".."
-import { Routes, Guild } from "discord.js"
+import envConfig from "../env.config";
+import { client } from "../main";
+import { Routes, Guild } from "discord.js";
+import { MyLogger } from ".";
 
-export async function registerCommandGuild(guild: Guild): Promise<void> {
+const logger = new MyLogger("utils>registerSlashCommand");
+
+export async function registerSlashCommand(guild?: Guild): Promise<void> {
   try {
-    await client.rest.put(
-      Routes.applicationGuildCommands(process.env.CLIENT_ID, guild.id),
-      { body: client.slashCommands }
-    )
-    console.log(`registering slash command\nserver: ${guild.name}`)
-  } catch (error) {
-    console.log(error)
-  }
-}
-export async function registerCommandGlobal(): Promise<void> {
-  try {
-    await client.rest.put(Routes.applicationCommands(process.env.CLIENT_ID), {
+    if (guild) {
+      await client.rest.put(
+        Routes.applicationGuildCommands(envConfig.CLIENT_ID, guild.id),
+        {
+          body: client.slashCommands,
+        },
+      );
+      logger.info(`registering slash command\nserver: ${guild.name}`);
+      return;
+    }
+    await client.rest.put(Routes.applicationCommands(envConfig.CLIENT_ID), {
       body: client.slashCommands,
-    })
-    console.log(`registering slash command globally`)
+    });
+    logger.info("registering slash command globally");
   } catch (error) {
-    console.log(error)
+    logger.error(error);
   }
-}
-
-export default {
-  registerCommandGuild,
-  registerCommandGlobal,
 }

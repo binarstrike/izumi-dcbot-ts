@@ -1,12 +1,12 @@
-import { Command } from "../../structures/Command"
-import generateImageUrl from "./utils/generateImageUrl"
-import generateEmbedForImage from "./utils/generateEmbedForImage"
-import {
-  SlashCommandBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-} from "discord.js"
+import { Command } from "../../structures/Command";
+import { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder } from "discord.js";
+import { generateEmbedForImage, navButtonBuilder } from "./utils";
+import { MyLogger } from "../../utils";
+import { ImageGenerateParams } from "openai/resources";
+import { openai } from "../../libs";
+import { randomBytes } from "crypto";
+
+const logger = new MyLogger("Command>openai>image");
 
 export default new Command({
   builder: new SlashCommandBuilder()
@@ -14,23 +14,21 @@ export default new Command({
       generate
         .setName("generate")
         .setDescription(
-          "Membuat sebuah gambar dengan input prompt berupa kalimat yang mendeskripsikan gambar"
+          "Membuat sebuah gambar dengan input prompt berupa kalimat yang mendeskripsikan gambar",
         )
         .addStringOption((prompt) =>
           prompt
             .setName("prompt")
             .setDescription("Prompt berupa kalimat yang mendeskripsikan gambar")
-            .setRequired(true)
+            .setRequired(true),
         )
         .addNumberOption((n) =>
           n
             .setName("n")
-            .setDescription(
-              "Jumlah gambar yang akan dibuat, max: 10 default: 1"
-            )
+            .setDescription("Jumlah gambar yang akan dibuat, max: 10 default: 1")
             .setMinValue(1)
             .setMaxValue(10)
-            .setRequired(false)
+            .setRequired(false),
         )
         .addStringOption((size) =>
           size
@@ -39,10 +37,10 @@ export default new Command({
             .addChoices(
               { name: "256x256", value: "256x256" },
               { name: "512x512", value: "512x512" },
-              { name: "1024x1024", value: "1024x1024" }
+              { name: "1024x1024", value: "1024x1024" },
             )
-            .setRequired(false)
-        )
+            .setRequired(false),
+        ),
     )
     .setName("image")
     .setDescription("Image generations command utility"),
@@ -50,86 +48,73 @@ export default new Command({
     switch (args.getSubcommand()) {
       case "generate":
         try {
-          await interaction.followUp("Tunggu bentar ya...")
-          const listImageUrl = await generateImageUrl(args)
+          await interaction.followUp("Tunggu bentar ya...");
 
-          function buttons(enable: boolean): Array<ButtonBuilder> {
-            return [
-              new ButtonBuilder()
-                .setCustomId("previous")
-                .setLabel("⏮️")
-                .setStyle(ButtonStyle.Success)
-                .setDisabled(!enable),
-              new ButtonBuilder()
-                .setLabel("🟦")
-                .setStyle(ButtonStyle.Danger)
-                .setDisabled(true)
-                .setCustomId("foo"),
-              new ButtonBuilder()
-                .setLabel("🟦")
-                .setStyle(ButtonStyle.Danger)
-                .setDisabled(true)
-                .setCustomId("bar"),
-              new ButtonBuilder()
-                .setCustomId("next")
-                .setLabel("⏭️")
-                .setStyle(ButtonStyle.Success)
-                .setDisabled(!enable),
-            ]
-          }
+          const imageGenerateOpts: ImageGenerateParams = {
+            prompt: args.getString("prompt"),
+            n: args.getNumber("n", false) ?? 1,
+            size: (args.getString("size", false) ?? "256x256") as ImageGenerateParams["size"],
+          };
+
+          const listGenerateImageUrl = (await openai.images.generate(imageGenerateOpts)).data.map(
+            (data) => data.url,
+          );
+
+          const navButtonCustomId = {
+            buttonNextId: `next-${randomBytes(3).toString("hex")}`,
+            buttonPrevId: `prev-${randomBytes(3).toString("hex")}`,
+          } satisfies Parameters<typeof navButtonBuilder>[0];
+
+          const navButtons = navButtonBuilder(navButtonCustomId);
           const rowComponents = {
-            normal: new ActionRowBuilder<ButtonBuilder>().addComponents(
-              ...buttons(true)
-            ),
-            disabled: new ActionRowBuilder<ButtonBuilder>().addComponents(
-              ...buttons(false)
-            ),
-          }
+            normal: new ActionRowBuilder<ButtonBuilder>().addComponents(...navButtons(true)),
+            disabled: new ActionRowBuilder<ButtonBuilder>().addComponents(...navButtons(false)),
+          };
 
           await interaction.editReply({
             content: "",
-            embeds: [generateEmbedForImage(listImageUrl[0])],
+            embeds: [generateEmbedForImage(listGenerateImageUrl[0], imageGenerateOpts)],
             components: [rowComponents.normal],
-          })
-          const collector = interaction.channel.createMessageComponentCollector(
-            { time: 15000 }
-          )
+          });
+          const collector = interaction.channel.createMessageComponentCollector({
+            time: 60000 * 10,
+          });
 
-          let page: number = 1
-          const maxPage: number = listImageUrl.length - 1
+          let page: number = 1;
+          const maxPage: number = listGenerateImageUrl.length - 1;
 
           collector.on("collect", async function (collectorInteraction) {
             switch (collectorInteraction.customId) {
-              case "next":
-                if (page > maxPage) page = 0
+              case navButtonCustomId.buttonNextId:
+                if (page > maxPage) page = 0;
                 collectorInteraction.update({
-                  embeds: [generateEmbedForImage(listImageUrl[page])],
-                })
-                page += 1
-                break
-              case "previous":
-                if (page < 0) page = maxPage
+                  embeds: [generateEmbedForImage(listGenerateImageUrl[page], imageGenerateOpts)],
+                });
+                page += 1;
+                break;
+              case navButtonCustomId.buttonPrevId:
+                if (page < 0) page = maxPage;
                 collectorInteraction.update({
-                  embeds: [generateEmbedForImage(listImageUrl[page])],
-                })
-                page -= 1
-                break
+                  embeds: [generateEmbedForImage(listGenerateImageUrl[page], imageGenerateOpts)],
+                });
+                page -= 1;
+                break;
               default:
-                break
+                break;
             }
-          })
+          });
           collector.on("end", async function () {
             interaction.editReply({
               components: [rowComponents.disabled],
-            })
-          })
+            });
+          });
         } catch (error) {
-          console.log(error)
+          logger.error(error);
           interaction.editReply({
             content: "❌Error when handling slash command❌",
-          })
+          });
         }
-        break
+        break;
     }
   },
-})
+});

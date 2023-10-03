@@ -1,11 +1,17 @@
-import { Event } from "../structures/Event"
-import { registerCommandGlobal } from "../utils/registerSlashCommand"
+import { Event } from "../structures/Event";
+import { MyLogger, registerSlashCommand } from "../utils";
 
-export default new Event("ready", async function (client_) {
-  await registerCommandGlobal()
-  client_.user.setPresence({
-    activities: [{ name: "experimental version", type: 0 }],
-    status: "dnd",
-  })
-  console.log(`Bot is online ${client_.user.tag}`)
-})
+const logger = new MyLogger("Events>ready");
+
+export default new Event(
+  "ready",
+  async function (client) {
+    await registerSlashCommand();
+    client.user.setPresence({
+      activities: [{ name: "experimental version", type: 0 }],
+      status: "dnd",
+    });
+    logger.info(`Bot is online ${client.user.tag}`);
+  },
+  true,
+);

@@ -1,67 +1,73 @@
-import { createLogger, transports, format, Logger } from "winston"
-import { join } from "path"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { transports, format, Logger } from "winston";
+import "winston-daily-rotate-file";
+import path from "path";
+import envConfig from "../env.config";
+const { combine, timestamp, printf, colorize } = format;
 
-const { combine, timestamp, label, printf, colorize } = format
+const logLevel = {
+  INFO: "info",
+  WARN: "warn",
+  ERROR: "error",
+} as const;
 
-interface ILevel {
-  error: 0
-  warn: 1
-  info: 2
-  http: 3
-  verbose: 4
-  debug: 5
-  silly: 6
+const dailyRotateFileOpts = {
+  dirname: path.resolve(process.cwd(), "logs"),
+  filename: "%DATE%.log",
+  datePattern: "YYYY-MM-DD",
+  zippedArchive: true,
+  maxSize: "5m",
+  maxFiles: "7d",
+  handleExceptions: true,
+  handleRejections: true,
+} satisfies typeof transports.DailyRotateFileTransportOptions;
+
+const logTransport =
+  envConfig.NODE_ENV === "production"
+    ? [new transports.DailyRotateFile(dailyRotateFileOpts), new transports.Console()]
+    : new transports.Console();
+
+export class MyLogger {
+  private __logger: Logger;
+  public label: string;
+
+  constructor(label: string) {
+    this.__logger = LoggerProvider.getInstance();
+    this.label = label;
+  }
+  log(level: keyof typeof logLevel = "INFO", message: string, options: object): void {
+    this.__logger.log(logLevel[level], message, options);
+  }
+  info(message: string): void {
+    this.log("INFO", message, { label: this.label });
+  }
+  warn(message: string): void {
+    this.log("WARN", message, { label: this.label });
+  }
+  error(message: string): void {
+    this.log("ERROR", message, { label: this.label });
+  }
 }
 
-export default class MyLogger {
-  private logger: Logger
-
-  private readonly __format = printf(
-    ({ level, message, label, timestamp }) =>
-      `${timestamp} [${label}] ${level}: ${message}`
-  )
-
-  private readonly __transports =
-    process.env.NODE_ENV === "production"
-      ? [
-          new transports.File({
-            filename: join(process.cwd(), "logs/combined.log"),
-          }),
-          new transports.File({
-            filename: join(process.cwd(), "logs/error.log"),
-            level: "error",
-          }),
-        ]
-      : new transports.Console()
-
-  constructor(_label: string) {
-    this.logger = this.__createLogger(_label)
-  }
-  private __createLogger(_label: string): Logger {
-    return createLogger({
-      transports: this.__transports,
+class LoggerProvider extends Logger {
+  private static __loggerInstance: LoggerProvider;
+  private constructor() {
+    super({
+      transports: logTransport,
       format: combine(
         timestamp(),
         colorize(),
-        label({ label: _label }),
-        this.__format
+        printf(
+          ({ level, message, label, timestamp }) =>
+            `${timestamp} - [${label}] ${level}: ${message}`,
+        ),
       ),
-    })
+    });
   }
-  public setLabel(_label: string): this {
-    this.logger = this.__createLogger(_label)
-    return this
-  }
-  public log<Level extends keyof ILevel>(level: Level, message: string): void {
-    this.logger.log({ level, message })
-  }
-  public info(message: string): void {
-    this.log("info", message)
-  }
-  public warn(message: string): void {
-    this.log("warn", message)
-  }
-  public error(message: string): void {
-    this.log("error", message)
+  static getInstance() {
+    if (!this.__loggerInstance) {
+      this.__loggerInstance = new this();
+    }
+    return this.__loggerInstance;
   }
 }

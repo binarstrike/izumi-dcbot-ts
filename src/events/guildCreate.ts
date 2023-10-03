@@ -1,30 +1,25 @@
-import { Event } from "../structures/Event"
-import prisma from "../configs/prisma"
+import { Event } from "../structures/Event";
+import { prisma } from "../libs";
+import { MyLogger } from "../utils";
+
+const logger = new MyLogger("Event>guildCreate");
 
 export default new Event("guildCreate", async function (guild) {
   try {
-    const findServer = await prisma.serverData.findUnique({
-      where: { serverId: guild.id },
-    })
-    if (!findServer) {
-      await prisma.serverData.create({
+    const findGuild = await prisma.guild.findUnique({
+      where: { guildId: guild.id },
+    });
+    if (!findGuild) {
+      await prisma.guild.create({
         data: {
-          serverId: guild.id,
-          serverName: guild.name,
-          channelConfiguration: {
-            create: { channelName: "general" },
-          },
+          guildId: guild.id,
+          guildName: guild.name,
+          configData: { create: { chatGptChannelId: "0" } },
         },
-      })
-      console.log(
-        `Server baru telah ditambahkan.\nid: ${guild.id}\nname: ${guild.name}`
-      )
-      return
+      });
+      logger.info(`Server baru telah ditambahkan.\nid: ${guild.id}\nname: ${guild.name}`);
     }
-    console.log(
-      `Server baru telah ditambahkan.\nid: ${guild.id}\nname: ${guild.name}`
-    )
   } catch (error) {
-    console.log(error)
+    logger.error(error);
   }
-})
+});

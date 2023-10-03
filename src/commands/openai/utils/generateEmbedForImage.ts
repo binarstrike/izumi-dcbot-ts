@@ -1,12 +1,15 @@
-import { createImageOpts } from "./generateImageUrl"
-import { EmbedBuilder } from "discord.js"
+import { EmbedBuilder } from "discord.js";
+import { ImageGenerateParams } from "openai/resources";
 
-export default function (imageUrl: string): EmbedBuilder {
+export function generateEmbedForImage(
+  imageUrl: string,
+  imageGenerateOpts: ImageGenerateParams,
+): EmbedBuilder {
   return new EmbedBuilder()
     .setTitle("Generated Image by AI")
     .setDescription(
-      `**prompt: **\`${createImageOpts.prompt}\`\n**n: **\`${createImageOpts.n}\`\n**size: **\`${createImageOpts.size}\``
+      `**prompt: **\`${imageGenerateOpts.prompt}\`\n**n: **\`${imageGenerateOpts.n}\`\n**size: **\`${imageGenerateOpts.size}\``,
     )
     .setImage(imageUrl)
-    .setColor(0x98ff98)
+    .setColor(0x98ff98);
 }
