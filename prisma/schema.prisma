@@ -1,23 +1,27 @@
 generator client {
   provider = "prisma-client-js"
+  output = "../src/generated/client"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model ServerData {
-  id                   Int                   @id @default(autoincrement())
-  serverId             String                @unique @db.Char(32)
-  serverName           String                @db.VarChar(100)
-  channelConfiguration ChannelConfiguration?
+model Guild {
+  id         Int         @id @default(autoincrement())
+  guildId    String      @unique
+  guildName  String
+  configData ConfigData?
+
+  @@map("guilds")
 }
 
-model ChannelConfiguration {
-  id          Int        @id @default(autoincrement())
-  channelId   String     @default("0") @db.Char(32)
-  idServer    String     @unique @db.Char(32)
-  serverData  ServerData @relation(fields: [idServer], references: [serverId])
-  channelName String     @default("general") @db.VarChar(100)
+model ConfigData {
+  id               Int     @id @default(autoincrement())
+  guild            Guild   @relation(fields: [guildRelId], references: [id], onDelete: Cascade)
+  guildRelId       Int     @unique
+  chatGptChannelId String?
+
+  @@map("configData")
 }
