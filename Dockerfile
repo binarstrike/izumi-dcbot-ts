@@ -1,25 +1,34 @@
-FROM node:18-slim AS build
+FROM node:18-alpine AS build
 
-WORKDIR /build
+WORKDIR /temp/build
 
-COPY . /build
+RUN corepack enable pnpm
 
-RUN yarn && yarn build:js
+COPY ./package.json ./pnpm-lock.yaml ./
+RUN --mount=type=cache,id=pnpm-store-cache,target=/root/.local/share/pnpm/store/v3 pnpm install --frozen-lockfile
 
-FROM node:18-slim
+COPY ./tsconfig.json ./
+COPY ./prisma ./prisma
+COPY ./src ./src
+RUN <<EOF
+    pnpm prisma generate
+    pnpm build
+    cp -rf src/generated dist/generated
+EOF
 
-WORKDIR /bot
+FROM node:18-alpine
 
-COPY --from=build /build/dist /bot/dist
+ENV APP_WORKDIR=/opt/izumiDcbot
 
-COPY ./prisma ./yarn.lock ./package.json ./
+WORKDIR ${APP_WORKDIR}
 
-COPY ./entrypoint.sh /entrypoint.sh
+RUN corepack enable pnpm
 
-RUN yarn --prod && \
-yarn prisma:generate && \
-yarn global add pm2
+COPY ./pnpm-lock.yaml ./package.json ./
+RUN --mount=type=cache,id=pnpm-store-cache,target=/root/.local/share/pnpm/store/v3 \
+    pnpm install --frozen-lockfile --prod --prefer-offline
 
-RUN yarn cache clean
+COPY --chmod=700 ./app-entrypoint.sh /usr/local/bin/app-entrypoint.sh
+COPY --from=build /temp/build/dist ./dist
 
-ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
+ENTRYPOINT [ "app-entrypoint.sh" ]
