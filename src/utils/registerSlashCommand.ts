@@ -8,12 +8,9 @@ const logger = new MyLogger("utils>registerSlashCommand");
 export async function registerSlashCommand(guild?: Guild): Promise<void> {
   try {
     if (guild) {
-      await client.rest.put(
-        Routes.applicationGuildCommands(envConfig.CLIENT_ID, guild.id),
-        {
-          body: client.slashCommands,
-        },
-      );
+      await client.rest.put(Routes.applicationGuildCommands(envConfig.CLIENT_ID, guild.id), {
+        body: client.slashCommands,
+      });
       logger.info(`registering slash command\nserver: ${guild.name}`);
       return;
     }
