@@ -6,19 +6,6 @@ import {
 } from "discord.js";
 import { ExtendedClient } from "../structures/Client";
 
-/**
- * {
- *  name: "commandname",
- *  description: "any description",
- *  run: async({ interaction }) => {
- *
- *  }
- * }
- */
-export interface ExtendedInteraction extends CommandInteraction {
-  member: GuildMember;
-}
-
 interface RunOptions {
   client: ExtendedClient;
   interaction: ExtendedInteraction;
@@ -26,6 +13,10 @@ interface RunOptions {
 }
 
 type RunFunction = (options: RunOptions) => void;
+
+export interface ExtendedInteraction extends CommandInteraction {
+  member: GuildMember;
+}
 
 export type CommandBuilderType = {
   builder: SlashCommandBuilder;
