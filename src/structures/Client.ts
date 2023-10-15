@@ -6,7 +6,7 @@ import {
   GatewayIntentBits,
   REST,
 } from "discord.js";
-import { CommandBuilderType } from "../typings/Command";
+import { CommandBuilderType } from "../types";
 import glob from "glob";
 import { promisify } from "util";
 import { Event } from "./Event";
