@@ -3,32 +3,24 @@ require("dotenv").config();
 import { z } from "zod";
 
 const envConfigSchema = z.object({
-  NODE_ENV: z.enum(["dev", "production"]),
-  CLIENT_ID: z.string().refine((id) => !isNaN(parseInt(id)), "client id is not a number"),
+  NODE_ENV: z.enum(["development", "production"]),
+  CLIENT_ID: z.string().refine((id) => /^[0-9]+$/.test(id)),
+  CLIENT_ACTIVITY_NAME: z.string(),
+  CLIENT_ACTIVITY_STATUS: z.enum(["online", "idle", "dnd", "invisible"]),
   BOT_TOKEN: z.string(),
-  MEMCACHED_HOST: z
-    .string()
-    .transform((host) => {
-      return host.split(",").map((hostAndPort) => {
-        const [host, port] = hostAndPort.split(":");
-        return { host, port: parseInt(port) };
-      });
-    })
-    .default("localhost:11211")
-    .refine(
-      (v) =>
-        v.every(
-          ({ host, port }) => typeof host === "string" && typeof port === "number" && !isNaN(port),
-        ),
-      "memcache hostname or port is invalid, example: localhost:11211",
-    ),
-  OPENAI_KEY: z.string(),
+  OPENAI_API_KEY: z.string(),
   TENOR_API_KEY: z.string(),
-  DATABASE_URL: z.string(),
+  DATABASE_URL: z.string().url(),
+  MEMCACHED_HOST: z.string().url(),
 });
 
-export const envConfig = envConfigSchema.parse(process.env);
+envConfigSchema.parse(process.env);
 
-export type EnvConfigType = z.infer<typeof envConfigSchema>;
+export type EnvConfig = z.infer<typeof envConfigSchema>;
 
-export default envConfig;
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace NodeJS {
+    interface ProcessEnv extends EnvConfig {}
+  }
+}

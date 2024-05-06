@@ -1,10 +1,9 @@
 import { CommandInteractionOptionResolver } from "discord.js";
-import { client } from "../main";
+import { client } from "..";
 import { Event } from "../structures/Event";
 import { ExtendedInteraction } from "../types";
 
 export default new Event("interactionCreate", async function (interaction) {
-  // Chat Input Commands
   if (interaction.isCommand()) {
     await interaction.deferReply();
     const command = client.commands.get(interaction.commandName);

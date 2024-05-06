@@ -1,7 +1,7 @@
-import { CommandBuilderType } from "../types";
+import { CommandBuilder } from "../types";
 
 export class Command {
-  constructor(commandOptions: CommandBuilderType) {
+  constructor(commandOptions: CommandBuilder) {
     Object.assign(this, commandOptions);
   }
 }

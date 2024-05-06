@@ -1,12 +1,10 @@
-import { Command } from "../../structures/Command";
 import { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder } from "discord.js";
-import { generateEmbedForImage, navButtonBuilder } from "./utils";
-import { MyLogger } from "../../utils";
+import { Command } from "../../structures/Command";
+import { generateEmbedForImage as generateEmbedImage, navButtonBuilder } from "./utils";
 import { ImageGenerateParams } from "openai/resources";
-import { openai } from "../../libs";
-import { randomBytes } from "crypto";
+import { newLogger, openai } from "../../libs";
 
-const logger = new MyLogger("Command>openai>image");
+const logger = newLogger("Command>openai>image");
 
 export default new Command({
   builder: new SlashCommandBuilder()
@@ -43,29 +41,29 @@ export default new Command({
         ),
     )
     .setName("image")
-    .setDescription("Image generations command utility"),
+    .setDescription("Command utility for image generation"),
   async run({ interaction, args }) {
     switch (args.getSubcommand()) {
       case "generate":
         try {
           await interaction.followUp("Tunggu bentar ya...");
 
-          const imageGenerateOpts: ImageGenerateParams = {
+          const imageGenerationOptions: ImageGenerateParams = {
             prompt: args.getString("prompt"),
             n: args.getNumber("n", false) ?? 1,
             size: (args.getString("size", false) ?? "256x256") as ImageGenerateParams["size"],
           };
 
-          const listGenerateImageUrl = (await openai.images.generate(imageGenerateOpts)).data.map(
-            (data) => data.url,
-          );
+          const generatedImageURLs = (
+            await openai.images.generate(imageGenerationOptions)
+          ).data.map((data) => data.url);
 
-          const navButtonCustomId = {
-            buttonNextId: `next-${randomBytes(3).toString("hex")}`,
-            buttonPrevId: `prev-${randomBytes(3).toString("hex")}`,
+          const navButtonId = {
+            buttonNextId: `next-${crypto.randomUUID()}`,
+            buttonPrevId: `prev-${crypto.randomUUID()}`,
           } satisfies Parameters<typeof navButtonBuilder>[0];
 
-          const navButtons = navButtonBuilder(navButtonCustomId);
+          const navButtons = navButtonBuilder(navButtonId);
           const rowComponents = {
             normal: new ActionRowBuilder<ButtonBuilder>().addComponents(...navButtons(true)),
             disabled: new ActionRowBuilder<ButtonBuilder>().addComponents(...navButtons(false)),
@@ -73,7 +71,7 @@ export default new Command({
 
           await interaction.editReply({
             content: "",
-            embeds: [generateEmbedForImage(listGenerateImageUrl[0], imageGenerateOpts)],
+            embeds: [generateEmbedImage(generatedImageURLs[0], imageGenerationOptions)],
             components: [rowComponents.normal],
           });
           const collector = interaction.channel.createMessageComponentCollector({
@@ -81,21 +79,21 @@ export default new Command({
           });
 
           let page: number = 1;
-          const maxPage: number = listGenerateImageUrl.length - 1;
+          const maxPage: number = generatedImageURLs.length - 1;
 
           collector.on("collect", async function (collectorInteraction) {
             switch (collectorInteraction.customId) {
-              case navButtonCustomId.buttonNextId:
+              case navButtonId.buttonNextId:
                 if (page > maxPage) page = 0;
                 collectorInteraction.update({
-                  embeds: [generateEmbedForImage(listGenerateImageUrl[page], imageGenerateOpts)],
+                  embeds: [generateEmbedImage(generatedImageURLs[page], imageGenerationOptions)],
                 });
                 page += 1;
                 break;
-              case navButtonCustomId.buttonPrevId:
+              case navButtonId.buttonPrevId:
                 if (page < 0) page = maxPage;
                 collectorInteraction.update({
-                  embeds: [generateEmbedForImage(listGenerateImageUrl[page], imageGenerateOpts)],
+                  embeds: [generateEmbedImage(generatedImageURLs[page], imageGenerationOptions)],
                 });
                 page -= 1;
                 break;
@@ -103,16 +101,13 @@ export default new Command({
                 break;
             }
           });
-          collector.on("end", async function () {
+          collector.on("end", () => {
             interaction.editReply({
               components: [rowComponents.disabled],
             });
           });
         } catch (error) {
           logger.error(error);
-          interaction.editReply({
-            content: "❌Error when handling slash command❌",
-          });
         }
         break;
     }

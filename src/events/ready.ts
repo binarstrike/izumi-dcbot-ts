@@ -1,15 +1,15 @@
+import { ActivityType } from "discord.js";
 import { Event } from "../structures/Event";
-import { MyLogger, registerSlashCommand } from "../utils";
+import { newLogger } from "../libs";
 
-const logger = new MyLogger("Events>ready");
+const logger = newLogger("Event>ready");
 
 export default new Event(
   "ready",
   async function (client) {
-    await registerSlashCommand();
     client.user.setPresence({
-      activities: [{ name: "experimental version", type: 0 }],
-      status: "dnd",
+      activities: [{ name: process.env.CLIENT_ACTIVITY_NAME, type: ActivityType["Playing"] }],
+      status: process.env.CLIENT_ACTIVITY_STATUS,
     });
     logger.info(`Bot is online ${client.user.tag}`);
   },

@@ -1,12 +1,12 @@
 import { Event } from "../structures/Event";
-import { prisma } from "../libs";
-import { MyLogger } from "../utils";
+import { db } from "../libs";
+import { newLogger } from "../libs";
 
-const logger = new MyLogger("Event>guildDelete");
+const logger = newLogger("Event>guildDelete");
 
 export default new Event("guildDelete", async function (guild) {
   try {
-    await prisma.guild.delete({ where: { guildId: guild.id } });
+    await db.guild.delete({ where: { guildId: guild.id } });
     logger.info(`Kicked from Server: ${guild.name} - ${guild.id}`);
   } catch (error) {
     logger.error(error);

@@ -1,10 +1,9 @@
 import { ClientEvents } from "discord.js";
 
-export class Event<Key extends keyof ClientEvents> {
+export class Event<K extends keyof ClientEvents> {
   constructor(
-    public event: Key,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public run: (...args: ClientEvents[Key]) => any,
+    public event: K,
+    public run: (...args: ClientEvents[K]) => void,
     public isOnce: boolean = false,
   ) {}
 }

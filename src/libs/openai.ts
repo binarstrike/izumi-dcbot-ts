@@ -1,8 +1,5 @@
-import { OpenAI, ClientOptions } from "openai";
-import { envConfig } from "../env.config";
+import { OpenAI } from "openai";
 
-const OPENAI_CONFIG: ClientOptions = {
-  apiKey: envConfig.OPENAI_KEY,
-};
+export const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export const openai = new OpenAI(OPENAI_CONFIG);
+export default openai;

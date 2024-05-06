@@ -18,7 +18,7 @@ export interface ExtendedInteraction extends CommandInteraction {
   member: GuildMember;
 }
 
-export type CommandBuilderType = {
+export type CommandBuilder = {
   builder: SlashCommandBuilder;
   run: RunFunction;
 };

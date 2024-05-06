@@ -1,7 +1,8 @@
 {
-  "editor.fontFamily": "FiraCode Nerd Font SemiBold",
+  "editor.fontFamily": "ComicShannsMono Nerd Font",
   "editor.fontLigatures": true,
-  "editor.fontSize": 13,
+  "editor.fontSize": 14,
+  "editor.fontWeight": "800",
   "[javascript]": {
     "editor.maxTokenizationLineLength": 2500,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -19,6 +20,13 @@
     "editor.formatOnType": false,
     "editor.tabSize": 2,
     "files.eol": "\n"
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false
   },
   "[shellscript]": {
     "files.eol": "\n"
