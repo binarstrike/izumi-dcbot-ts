@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import { URLSearchParams } from "url";
 import { newLogger } from "../libs/logger";
 
-const logger = newLogger("utils>fetchTenorGIF");
+const logger = newLogger("utils:fetchTenorGIF");
 
 export async function fetchGIF(params: GIFApiFetchQueryParam): Promise<string[]> {
   const queryParam = new URLSearchParams({

@@ -4,7 +4,7 @@ import { generateEmbedForImage as generateEmbedImage, navButtonBuilder } from ".
 import { ImageGenerateParams } from "openai/resources";
 import { newLogger, openai } from "../../libs";
 
-const logger = newLogger("Command>openai>image");
+const logger = newLogger("Command:openai:image");
 
 export default new Command({
   builder: new SlashCommandBuilder()

@@ -4,7 +4,7 @@ import { newLogger, memcache } from "../../libs";
 import { fetchGIF } from "../../utils";
 import { cacheKey } from "../../consts";
 
-const logger = newLogger("Command>reaction>blush");
+const logger = newLogger("Command:reaction:blush");
 
 export default new Command({
   builder: new SlashCommandBuilder()

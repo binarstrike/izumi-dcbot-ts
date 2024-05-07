@@ -2,7 +2,7 @@ import { Event } from "../structures/Event";
 import { db } from "../libs";
 import { newLogger } from "../libs";
 
-const logger = newLogger("Event>guildCreate");
+const logger = newLogger("Event:guildCreate");
 
 export default new Event("guildCreate", async function (guild) {
   try {
@@ -16,7 +16,7 @@ export default new Event("guildCreate", async function (guild) {
           guildName: guild.name,
         },
       });
-      logger.info(`New server added.\nid: ${guild.id}\nname: ${guild.name}`);
+      logger.info(`New server added ${guild.name} with id ${guild.id}`);
     }
   } catch (error) {
     logger.error(error);

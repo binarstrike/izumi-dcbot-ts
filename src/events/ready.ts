@@ -2,7 +2,7 @@ import { ActivityType } from "discord.js";
 import { Event } from "../structures/Event";
 import { newLogger } from "../libs";
 
-const logger = newLogger("Event>ready");
+const logger = newLogger("Event:ready");
 
 export default new Event(
   "ready",

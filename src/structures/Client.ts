@@ -72,7 +72,7 @@ export class ExtendedClient extends Client {
         await this.rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guild.id), {
           body: this.slashCommands,
         });
-        logger.info(`registering slash command\nserver: ${guild.name}`);
+        logger.info(`registering slash command at server ${guild.name} with id ${guild.id}`);
         return;
       }
 
@@ -82,6 +82,7 @@ export class ExtendedClient extends Client {
       logger.info("registering slash command globally");
     } catch (error) {
       logger.error(error);
+      throw error;
     }
   }
 }
