@@ -37,8 +37,8 @@ importers:
         version: 3.22.2
     devDependencies:
       '@prisma/client':
-        specifier: ^4.16.2
-        version: 4.16.2(prisma@4.16.2)
+        specifier: ^5.13.0
+        version: 5.13.0(prisma@5.13.0)
       '@types/glob':
         specifier: ^8.1.0
         version: 8.1.0
@@ -67,8 +67,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       prisma:
-        specifier: ^4.16.2
-        version: 4.16.2
+        specifier: ^5.13.0
+        version: 5.13.0
       ts-node-dev:
         specifier: ^2.0.0
         version: 2.0.0(@types/node@20.7.0)(typescript@5.2.2)
@@ -172,20 +172,29 @@ packages:
     resolution: {integrity: sha512-POgTXhjrTfbTV63DiFXav4lBHiICLKKwDeaKn9Nphwj7WH6m0hMMCaJkMyRWjgtPFyRKRVoMXXjczsTQRDEhYw==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@prisma/client@4.16.2':
-    resolution: {integrity: sha512-qCoEyxv1ZrQ4bKy39GnylE8Zq31IRmm8bNhNbZx7bF2cU5aiCCnSa93J2imF88MBjn7J9eUQneNxUQVJdl/rPQ==}
-    engines: {node: '>=14.17'}
+  '@prisma/client@5.13.0':
+    resolution: {integrity: sha512-uYdfpPncbZ/syJyiYBwGZS8Gt1PTNoErNYMuqHDa2r30rNSFtgTA/LXsSk55R7pdRTMi5pHkeP9B14K6nHmwkg==}
+    engines: {node: '>=16.13'}
     peerDependencies:
       prisma: '*'
     peerDependenciesMeta:
       prisma:
         optional: true
 
-  '@prisma/engines-version@4.16.1-1.4bc8b6e1b66cb932731fb1bdbbc550d1e010de81':
-    resolution: {integrity: sha512-q617EUWfRIDTriWADZ4YiWRZXCa/WuhNgLTVd+HqWLffjMSPzyM5uOWoauX91wvQClSKZU4pzI4JJLQ9Kl62Qg==}
+  '@prisma/debug@5.13.0':
+    resolution: {integrity: sha512-699iqlEvzyCj9ETrXhs8o8wQc/eVW+FigSsHpiskSFydhjVuwTJEfj/nIYqTaWFYuxiWQRfm3r01meuW97SZaQ==}
 
-  '@prisma/engines@4.16.2':
-    resolution: {integrity: sha512-vx1nxVvN4QeT/cepQce68deh/Turxy5Mr+4L4zClFuK1GlxN3+ivxfuv+ej/gvidWn1cE1uAhW7ALLNlYbRUAw==}
+  '@prisma/engines-version@5.13.0-23.b9a39a7ee606c28e3455d0fd60e78c3ba82b1a2b':
+    resolution: {integrity: sha512-AyUuhahTINGn8auyqYdmxsN+qn0mw3eg+uhkp8zwknXYIqoT3bChG4RqNY/nfDkPvzWAPBa9mrDyBeOnWSgO6A==}
+
+  '@prisma/engines@5.13.0':
+    resolution: {integrity: sha512-hIFLm4H1boj6CBZx55P4xKby9jgDTeDG0Jj3iXtwaaHmlD5JmiDkZhh8+DYWkTGchu+rRF36AVROLnk0oaqhHw==}
+
+  '@prisma/fetch-engine@5.13.0':
+    resolution: {integrity: sha512-Yh4W+t6YKyqgcSEB3odBXt7QyVSm0OQlBSldQF2SNXtmOgMX8D7PF/fvH6E6qBCpjB/yeJLy/FfwfFijoHI6sA==}
+
+  '@prisma/get-platform@5.13.0':
+    resolution: {integrity: sha512-B/WrQwYTzwr7qCLifQzYOmQhZcFmIFhR81xC45gweInSUn2hTEbfKUPd2keAog+y5WI5xLAFNJ3wkXplvSVkSw==}
 
   '@sapphire/async-queue@1.5.0':
     resolution: {integrity: sha512-JkLdIsP8fPAdh9ZZjrbHWR/+mZj0wvKS5ICibcLrRI1j84UmLMshx5n9QmL8b95d4onJ2xxiyugTgSAX7AalmA==}
@@ -1000,9 +1009,9 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
-  prisma@4.16.2:
-    resolution: {integrity: sha512-SYCsBvDf0/7XSJyf2cHTLjLeTLVXYfqp7pG5eEVafFLeT0u/hLFz/9W196nDRGUOo1JfPatAEb+uEnTQImQC1g==}
-    engines: {node: '>=14.17'}
+  prisma@5.13.0:
+    resolution: {integrity: sha512-kGtcJaElNRAdAGsCNykFSZ7dBKpL14Cbs+VaQ8cECxQlRPDjBlMHNFYeYt0SKovAVy2Y65JXQwB3A5+zIQwnTg==}
+    engines: {node: '>=16.13'}
     hasBin: true
 
   proxy-from-env@1.1.0:
@@ -1416,15 +1425,30 @@ snapshots:
       picocolors: 1.0.0
       tslib: 2.6.2
 
-  '@prisma/client@4.16.2(prisma@4.16.2)':
-    dependencies:
-      '@prisma/engines-version': 4.16.1-1.4bc8b6e1b66cb932731fb1bdbbc550d1e010de81
+  '@prisma/client@5.13.0(prisma@5.13.0)':
     optionalDependencies:
-      prisma: 4.16.2
+      prisma: 5.13.0
 
-  '@prisma/engines-version@4.16.1-1.4bc8b6e1b66cb932731fb1bdbbc550d1e010de81': {}
+  '@prisma/debug@5.13.0': {}
 
-  '@prisma/engines@4.16.2': {}
+  '@prisma/engines-version@5.13.0-23.b9a39a7ee606c28e3455d0fd60e78c3ba82b1a2b': {}
+
+  '@prisma/engines@5.13.0':
+    dependencies:
+      '@prisma/debug': 5.13.0
+      '@prisma/engines-version': 5.13.0-23.b9a39a7ee606c28e3455d0fd60e78c3ba82b1a2b
+      '@prisma/fetch-engine': 5.13.0
+      '@prisma/get-platform': 5.13.0
+
+  '@prisma/fetch-engine@5.13.0':
+    dependencies:
+      '@prisma/debug': 5.13.0
+      '@prisma/engines-version': 5.13.0-23.b9a39a7ee606c28e3455d0fd60e78c3ba82b1a2b
+      '@prisma/get-platform': 5.13.0
+
+  '@prisma/get-platform@5.13.0':
+    dependencies:
+      '@prisma/debug': 5.13.0
 
   '@sapphire/async-queue@1.5.0': {}
 
@@ -2251,9 +2275,9 @@ snapshots:
 
   prettier@3.0.3: {}
 
-  prisma@4.16.2:
+  prisma@5.13.0:
     dependencies:
-      '@prisma/engines': 4.16.2
+      '@prisma/engines': 5.13.0
 
   proxy-from-env@1.1.0: {}
 
