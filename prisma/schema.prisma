@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/client"
+  output   = "../src/prisma-client"
 }
 
 datasource db {
@@ -9,18 +9,9 @@ datasource db {
 }
 
 model Guild {
-  id         Int         @id @default(autoincrement())
-  guildId    String      @unique
-  guildName  String
-  configData ConfigData?
+  id        Int    @id @default(autoincrement())
+  guildId   String @unique
+  guildName String
 
   @@map("guilds")
-}
-
-model ConfigData {
-  id         Int   @id @default(autoincrement())
-  guild      Guild @relation(fields: [guildRelId], references: [id], onDelete: Cascade)
-  guildRelId Int   @unique
-
-  @@map("configData")
 }
